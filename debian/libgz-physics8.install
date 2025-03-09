@@ -1,0 +1,4 @@
+usr/lib/*/*.so.*
+usr/lib/*/gz-physics-*/*
+usr/libexec/*
+#usr/share/*
