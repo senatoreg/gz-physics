@@ -51,7 +51,7 @@
 #include <sdf/World.hh>
 
 #include <test/Utils.hh>
-#include <test/common_test/Worlds.hh>
+#include "test/common_test/Worlds.hh"
 #include "Worlds.hh"
 
 #include "World.hh"
@@ -321,7 +321,7 @@ TEST_P(SDFFeatures_TEST, CheckDartsimData)
   dart::simulation::WorldPtr dartWorld = world->GetDartsimWorld();
   ASSERT_NE(nullptr, dartWorld);
 
-  ASSERT_EQ(7u, dartWorld->getNumSkeletons());
+  ASSERT_EQ(8u, dartWorld->getNumSkeletons());
 
   const dart::dynamics::SkeletonPtr skeleton = dartWorld->getSkeleton(1);
   ASSERT_NE(nullptr, skeleton);
