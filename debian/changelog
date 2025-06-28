@@ -1,14 +1,5 @@
-gz-physics (8.1.0-1) UNRELEASED; urgency=medium
+gz-physics (8.2.0-1) UNRELEASED; urgency=medium
 
   * Initial release.
-  * New upstream release.
-  * New upstream release.
-  * New upstream release.
-  * New upstream release.
-  * New upstream release.
-  * New upstream release.
-  * New upstream release.
-  * New upstream release.
-  * New upstream release.
 
- -- Giovanni Senatore <giovanni.senatore@gmail.com>  Mon, 24 Feb 2025 19:07:35 +0100
+ -- Giovanni Senatore <giovanni.senatore@gmail.com>  Sat, 28 Jun 2025 13:12:11 +0200
