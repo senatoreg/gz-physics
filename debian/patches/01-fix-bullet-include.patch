@@ -1,0 +1,32 @@
+diff --git a/bullet-featherstone/CMakeLists.txt b/bullet-featherstone/CMakeLists.txt
+index fbae005e..17cd8a17 100644
+--- a/bullet-featherstone/CMakeLists.txt
++++ b/bullet-featherstone/CMakeLists.txt
+@@ -5,6 +5,7 @@ gz_add_component(bullet-featherstone INTERFACE
+   GET_TARGET_NAME features)
+ 
+ link_directories(${BULLET_LIBRARY_DIRS})
++include_directories(${BULLET_INCLUDE_DIRS})
+ target_link_libraries(${features} INTERFACE GzBullet::GzBullet)
+ 
+ gz_get_libsources_and_unittests(sources test_sources)
+diff --git a/bullet/CMakeLists.txt b/bullet/CMakeLists.txt
+index f5553822..4c285b11 100644
+--- a/bullet/CMakeLists.txt
++++ b/bullet/CMakeLists.txt
+@@ -5,6 +5,7 @@ gz_add_component(bullet INTERFACE
+   GET_TARGET_NAME features)
+ 
+ link_directories(${BULLET_LIBRARY_DIRS})
++include_directories(${BULLET_INCLUDE_DIRS})
+ target_link_libraries(${features} INTERFACE GzBullet::GzBullet)
+ 
+ gz_get_libsources_and_unittests(sources test_sources)
+@@ -16,6 +17,7 @@ gz_add_component(${engine_name}
+   DEPENDS_ON_COMPONENTS bullet
+   GET_TARGET_NAME bullet_plugin)
+ 
++
+ target_link_libraries(${bullet_plugin}
+   PUBLIC
+     ${features}
