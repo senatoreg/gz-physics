@@ -27,13 +27,13 @@ Section: libdevel
 Architecture: any
 Multi-Arch: same
 Depends:
- libgz-physics8 (= ${binary:Version}),
+ libgz-physics9 (= ${binary:Version}),
  ${misc:Depends},
 Description: Abstract physics interface designed to support simulation and rapid development of robot applications - development files
  Gazebo Physics, a component of Gazebo, provides an abstract physics interface
  designed to support simulation and rapid development of robot applications.
 
-Package: libgz-physics8
+Package: libgz-physics9
 Architecture: any
 Multi-Arch: same
 Depends:
