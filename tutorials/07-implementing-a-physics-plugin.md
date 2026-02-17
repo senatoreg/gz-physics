@@ -71,7 +71,7 @@ a plugin.
 - The third argument is the `FeatureList`, specifying all the features that this
 plugin provides, i.e. `HelloWorldFeatureList`
 
-### Setup CMakeLists.txt for building (Version: gz-physics8)
+### Setup CMakeLists.txt for building (Version: gz-physics9)
 
 Now create a file named `CMakeLists.txt` with your favorite editor and add these
 lines for finding `gz-plugin` and `gz-physics` dependencies for the Fortress release:
@@ -109,7 +109,7 @@ to create a simple loader. Then we test our plugin using the loader as follow:
 
 ```bash
 cd ~
-./hello_world_loader/build/hello_world_loader simple_plugin/build/libHelloWorldPlugin.so
+./hello_world_loader/build/hello_world_loader hello_world_plugin/build/libHelloWorldPlugin.so
 ```
 
 And you will see the engine info of our plugin:

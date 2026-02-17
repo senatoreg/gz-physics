@@ -35,8 +35,8 @@ cars depending on physics engines and visualize the collision concept.
 To run the demo world, download the SDFormat file by:
 
 ```bash
-wget https://raw.githubusercontent.com/gazebosim/gz-sim/gz-physics8/examples/worlds/diff_drive.sdf -P ~
-wget https://raw.githubusercontent.com/gazebosim/gz-sim/gz-physics8/examples/worlds/velocity_control.sdf -P ~
+wget https://raw.githubusercontent.com/gazebosim/gz-sim/main/examples/worlds/diff_drive.sdf -P ~
+wget https://raw.githubusercontent.com/gazebosim/gz-sim/main/examples/worlds/velocity_control.sdf -P ~
 ```
 
 Then run the simulation:
@@ -128,7 +128,7 @@ and the blades will stop after some time due to friction.
 
 @image html img/lift_drag_torque.gif width=100%
 
-Several simulation features come into effect in this demo. The lift and drag force is computed by taking the wind pressure, mass of the cude, and gravity into account, and the resulting force is exerted on multiple joints. Dartsim is used to power this demo.
+Several simulation features come into effect in this demo. The lift and drag force is computed by taking the wind pressure, mass of the cube, and gravity into account, and the resulting force is exerted on multiple joints. Dartsim is used to power this demo.
 
 ### Buoyancy
 

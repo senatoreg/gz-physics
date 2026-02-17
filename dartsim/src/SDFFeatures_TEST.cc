@@ -17,6 +17,7 @@
 
 #include <type_traits>
 
+#include <dart/dynamics/BallJoint.hpp>
 #include <dart/dynamics/BodyNode.hpp>
 #include <dart/dynamics/DegreeOfFreedom.hpp>
 #include <dart/dynamics/FreeJoint.hpp>
@@ -321,7 +322,7 @@ TEST_P(SDFFeatures_TEST, CheckDartsimData)
   dart::simulation::WorldPtr dartWorld = world->GetDartsimWorld();
   ASSERT_NE(nullptr, dartWorld);
 
-  ASSERT_EQ(8u, dartWorld->getNumSkeletons());
+  ASSERT_EQ(9u, dartWorld->getNumSkeletons());
 
   const dart::dynamics::SkeletonPtr skeleton = dartWorld->getSkeleton(1);
   ASSERT_NE(nullptr, skeleton);
@@ -360,17 +361,6 @@ TEST_P(SDFFeatures_TEST, CheckDartsimData)
          std::numeric_limits<double>::infinity(),
          std::numeric_limits<double>::infinity(),
          std::numeric_limits<double>::infinity());
-
-  /// \todo (anyone) getBodyNode("blah")->getFrictionCoeff is deprecated,
-  /// disabling these tests.
-  /*
-  EXPECT_DOUBLE_EQ(1.1, skeleton->getBodyNode("base")->getFrictionCoeff());
-  // The last collision element overwrites the value set by previous collision
-  // elements. We expect mu=1, the default value, instead of 0.1.
-  EXPECT_DOUBLE_EQ(1, skeleton->getBodyNode("upper_link")->getFrictionCoeff());
-  // Gets the default value when the <surface> tag is missing
-  EXPECT_DOUBLE_EQ(1, skeleton->getBodyNode("lower_link")->getFrictionCoeff());
-  */
 
   for (const auto * joint : {skeleton->getJoint(1), skeleton->getJoint(2)})
   {
@@ -417,6 +407,14 @@ TEST_P(SDFFeatures_TEST, CheckDartsimData)
       screwJointTest->getJoint(1));
   ASSERT_NE(nullptr, screwJoint);
   EXPECT_DOUBLE_EQ(-GZ_PI, screwJoint->getPitch());
+
+  const dart::dynamics::SkeletonPtr ballJointTest =
+      dartWorld->getSkeleton("ball_joint_test");
+  ASSERT_NE(nullptr, ballJointTest);
+  ASSERT_EQ(2u, ballJointTest->getNumBodyNodes());
+  const auto *ballJoint = dynamic_cast<const dart::dynamics::BallJoint*>(
+      ballJointTest->getJoint(1));
+  ASSERT_NE(nullptr, ballJoint);
 }
 
 /////////////////////////////////////////////////

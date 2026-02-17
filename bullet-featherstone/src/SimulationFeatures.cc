@@ -28,6 +28,69 @@ namespace physics {
 namespace bullet_featherstone {
 
 /////////////////////////////////////////////////
+void enforceFixedConstraint(
+    btMultiBodyFixedConstraint *_fixedConstraint)
+{
+  // Update fixed constraint's child link pose to maintain a fixed transform
+  // from the parent link.
+  GzMultiBody *parent =
+      dynamic_cast<GzMultiBody*> (_fixedConstraint->getMultiBodyA());
+  if (parent == nullptr)
+  {
+    std::cerr << "Internal error: Failed to cast parent btMultiBody to "
+                 "GzMultiBody!" << std::endl;
+    return;
+  }
+
+  GzMultiBody *child =
+      dynamic_cast<GzMultiBody*> (_fixedConstraint->getMultiBodyB());
+  if (child == nullptr)
+  {
+    std::cerr << "Internal error: Failed to cast child btMultiBody to "
+                  "GzMultiBody!" << std::endl;
+    return;
+  }
+
+  btTransform parentToChildTf;
+  parentToChildTf.setOrigin(_fixedConstraint->getPivotInA());
+  parentToChildTf.setBasis(_fixedConstraint->getFrameInA());
+
+  int parentLinkIndex = _fixedConstraint->getLinkA();
+  int childLinkIndex = _fixedConstraint->getLinkB();
+
+  btTransform parentLinkTf;
+  btTransform childLinkTf;
+  if (parentLinkIndex == -1)
+  {
+    parentLinkTf = parent->getBaseWorldTransform();
+  }
+  else
+  {
+    btMultiBodyLinkCollider *collider =
+        parent->getLinkCollider(parentLinkIndex);
+    parentLinkTf = collider->getWorldTransform();
+  }
+  if (childLinkIndex == -1)
+  {
+    childLinkTf = child->getBaseWorldTransform();
+  }
+  else
+  {
+    btMultiBodyLinkCollider *collider =
+        child->getLinkCollider(childLinkIndex);
+    childLinkTf = collider->getWorldTransform();
+  }
+
+  btTransform expectedChildLinkTf = parentLinkTf * parentToChildTf;
+  btTransform childBaseTf =  child->getBaseWorldTransform();
+  btTransform childBaseToLink =
+      childBaseTf.inverse() * childLinkTf;
+  btTransform newChildBaseTf =
+      expectedChildLinkTf * childBaseToLink.inverse();
+  child->SetBaseWorldTransform(newChildBaseTf);
+}
+
+/////////////////////////////////////////////////
 void SimulationFeatures::WorldForwardStep(
     const Identity &_worldID,
     ForwardStep::Output & _h,
@@ -44,6 +107,18 @@ void SimulationFeatures::WorldForwardStep(
     stepSize = dt.count();
   }
 
+  // Update fixed constraint behavior to weld child to parent.
+  // Do this before stepping, i.e. before physics engine tries to solve and
+  // enforce the constraint
+  for (auto & joint : this->joints)
+  {
+    if (joint.second->fixedConstraint &&
+        joint.second->fixedConstraintWeldChildToParent)
+    {
+      enforceFixedConstraint(joint.second->fixedConstraint.get());
+    }
+  }
+
   // Bullet updates collision transforms *after* forward integration. But in
   // some case (e.g. if joint positions were updated), collision transforms may
   // need to be manually updated before stepping the Bullet simulation.
@@ -55,10 +130,12 @@ void SimulationFeatures::WorldForwardStep(
     }
   }
 
-  // Add joint damping torque.
+  // Add joint damping and spring stiffness torque.
   // TODO(https://github.com/bulletphysics/bullet3/issues/4709) Remove this
-  // once upstream Bullet supports internal joint damping and set
-  // `model->body->getLink(i).m_jointDamping` directly in SDFFeatures.cc.
+  // once upstream Bullet supports internal joint damping and spring stiffness.
+  // e.g. set `model->body->getLink(i).m_jointDamping` directly in
+  // SDFFeatures.cc. Note: there is currently no `m_jointSpringStiffness`
+  // property.
   for (auto & joint : this->joints)
   {
     const auto *model =
@@ -67,8 +144,9 @@ void SimulationFeatures::WorldForwardStep(
         std::get_if<InternalJoint>(&joint.second->identifier);
     if (model != nullptr && model->body != nullptr && identifier != nullptr)
     {
-      model->body->AddJointDampingTorque(identifier->indexInBtModel,
-                                         joint.second->damping);
+      model->body->AddJointDampingStiffnessTorque(identifier->indexInBtModel,
+          joint.second->damping, joint.second->springStiffness,
+          joint.second->springReference);
     }
   }
 
